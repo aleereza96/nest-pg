@@ -1,7 +1,7 @@
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UserResponseDto } from './dto/user-response.dto'
-import { User } from './entities/user.entity'
+import { User } from './user.entity'
 
 export class UserMapper {
   public static async toDto(entity: User): Promise<UserResponseDto> {

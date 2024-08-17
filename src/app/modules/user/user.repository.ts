@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { DataSource } from 'typeorm'
-import { User } from './entities/user.entity'
-import { GenericRepository } from 'src/app/shared/repository/generic-repository'
+import { User } from './user.entity'
+import { BaseRepository } from 'src/app/shared/repository/base-repository'
 import { PaginationRequest } from 'src/app/shared/interfaces/pagination.interface'
 
 @Injectable()
-export class UserRepository extends GenericRepository<User> {
+export class UserRepository extends BaseRepository<User> {
   constructor(private dataSource: DataSource) {
     super(User, dataSource)
   }
