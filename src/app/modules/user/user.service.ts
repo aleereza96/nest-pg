@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { CreateUserDto } from './dto/create-user.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
+import { InjectRepository } from '@nestjs/typeorm'
+import { UserRepository } from './user.repository'
+import { UserMapper } from './user.mapper'
+import { HashHelper } from 'src/app/shared/helpers/hash.helper'
+import { UserResponseDto } from './dto/user-response.dto'
+import { PaginationRequest } from 'src/app/shared/interfaces/pagination.interface'
+import { Pagination } from 'src/app/shared/helpers/pagination.helper'
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(UserRepository)
+    private readonly userRepository: UserRepository,
+  ) {}
+
+  public async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    let user = UserMapper.toCreateEntity(createUserDto)
+    user.password = await HashHelper.encrypt(user.password)
+    user = await this.userRepository.save(user)
+    return UserMapper.toDto(user)
   }
 
-  findAll() {
-    return `This action returns all user`;
+  public async findAll(pagination: PaginationRequest) {
+    const [users, count] =
+      await this.userRepository.findAllUsersAndCount(pagination)
+
+    const responseDtos = await Promise.all(users.map(UserMapper.toDto))
+    return Pagination.of(pagination, count, responseDtos)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  public async findOne(id: number): Promise<UserResponseDto> {
+    const userEntity = await this.userRepository.findOne({ where: { id } })
+    if (!userEntity) {
+      throw new NotFoundException('User Not Found!')
+    }
+
+    return UserMapper.toDto(userEntity)
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  public async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    let user = await this.userRepository.findOne({ where: { id } })
+    if (!user) {
+      throw new NotFoundException('User Not Found!')
+    }
+    user = UserMapper.toUpdateEntity(user, updateUserDto)
+    user = await this.userRepository.save(user)
+    return UserMapper.toDto(user)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  public async remove(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } })
+    return await this.userRepository.delete(user)
   }
 }

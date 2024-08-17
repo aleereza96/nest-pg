@@ -21,7 +21,6 @@ export class UserMapper {
 
   public static toUpdateEntity(entity: User, dto: UpdateUserDto): User {
     entity.username = dto.username
-
     return entity
   }
 }
