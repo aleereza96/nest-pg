@@ -5,4 +5,5 @@ export default registerAs('app', () => ({
   apiPrefix: process.env.API_PREFIX,
   env: process.env.NODE_ENV,
   allowedOrigins: process.env.ALLOWED_ORIGINS,
+  version: process.env.APP_VERSION,
 }))
