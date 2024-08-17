@@ -7,6 +7,8 @@ import { ResponseInterceptor } from './shared/http/response.interceptor'
 import { HttpExceptionFilter } from './shared/http/http-exception.filter'
 import { UserModule } from './modules/user/user.module'
 import { ProfileModule } from './modules/profile/profile.module'
+import { PermissionModule } from './modules/permissions/permission.module'
+import { RoleModule } from './modules/roles/role.module'
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ProfileModule } from './modules/profile/profile.module'
     CoreModule,
     UserModule,
     ProfileModule,
+    PermissionModule,
+    RoleModule,
   ],
   providers: [
     ConfigService,

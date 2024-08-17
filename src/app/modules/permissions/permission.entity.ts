@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/app/shared/entities/base-entity'
-import { Column, Entity } from 'typeorm'
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm'
+import { Role } from '../roles/role.entity'
 
 @Entity('permission')
 export class Permission extends BaseEntity {
@@ -13,4 +14,15 @@ export class Permission extends BaseEntity {
 
   @Column()
   active: boolean
+
+  @ManyToMany(() => Role, (role) => role.permissions)
+  @JoinTable({
+    name: 'REL_PERMISSION_ROLE',
+  })
+  roles: Role[]
+
+  constructor(permission?: Partial<Permission>) {
+    super()
+    Object.assign(this, permission)
+  }
 }
