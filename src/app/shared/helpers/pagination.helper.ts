@@ -1,4 +1,4 @@
-import { PaginationResponseDto } from '../dto/pagination-response.dto'
+import { PaginationResponseDto } from '../dtos/pagination-response.dto'
 import { PaginationRequest } from '../interfaces/pagination.interface'
 
 export class Pagination {
