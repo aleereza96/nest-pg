@@ -18,7 +18,7 @@ import { PaginationParams } from 'src/app/shared/decorators/pagination-params.de
 import { PaginationResponseDto } from 'src/app/shared/dtos/pagination-response.dto'
 import { ApiBody, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger'
 import { ApiGlobalResponse } from 'src/app/shared/decorators/api-global-response.decorators'
-import { ApiPaginatedResponse } from 'src/app/shared/decorators/api-paginated-response.decorador'
+import { ApiPaginatedResponse } from 'src/app/shared/decorators/api-paginated-response.decorator'
 
 @Controller('user')
 export class UserController {
