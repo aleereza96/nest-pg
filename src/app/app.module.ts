@@ -5,6 +5,8 @@ import Configs from './shared/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { ResponseInterceptor } from './shared/http/response.interceptor'
 import { HttpExceptionFilter } from './shared/http/http-exception.filter'
+import { UserModule } from './modules/user/user.module'
+import { ProfileModule } from './modules/profile/profile.module'
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { HttpExceptionFilter } from './shared/http/http-exception.filter'
       expandVariables: true,
     }),
     CoreModule,
+    UserModule,
+    ProfileModule,
   ],
   providers: [
     ConfigService,

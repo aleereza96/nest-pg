@@ -1,8 +1,6 @@
-
-
 export interface DefaultPagination {
   defaultPage?: number
   defaultLimit?: number
-  defaultOrder?: any
+  defaultSortBy?: string
   defaultSortOrder?: string
 }

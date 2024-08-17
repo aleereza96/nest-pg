@@ -6,7 +6,7 @@ export const PaginationParams = createParamDecorator(
     data: DefaultPagination = {
       defaultPage: 1,
       defaultLimit: 10,
-      defaultOrder: {},
+      defaultSortBy: 'id',
       defaultSortOrder: 'ASC',
     },
     ctx: ExecutionContext,
@@ -15,11 +15,11 @@ export const PaginationParams = createParamDecorator(
       query: { page, limit, sortBy, sortOrder, joins, ...params },
     } = ctx.switchToHttp().getRequest()
 
-    const { defaultPage, defaultLimit, defaultOrder, defaultSortOrder } = data
+    const { defaultPage, defaultLimit, defaultSortBy, defaultSortOrder } = data
 
     const order = sortBy
       ? { [sortBy]: sortOrder ? sortOrder : defaultSortOrder }
-      : defaultOrder
+      : defaultSortBy
 
     limit = limit && limit > 0 ? +limit : defaultLimit
     page = page ?? defaultPage
@@ -27,7 +27,8 @@ export const PaginationParams = createParamDecorator(
     return Object.assign(data ? data : {}, {
       page,
       limit,
-      order,
+      sortBy,
+      sortOrder,
       joins,
       params,
     })

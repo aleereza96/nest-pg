@@ -14,10 +14,10 @@ export class UserRepository extends BaseRepository<User> {
     pagination: PaginationRequest,
   ): Promise<[users: User[], count: number]> {
     const {
-      page = 1,
-      limit = 10,
-      sortBy = 'id',
-      sortOrder = 'ASC',
+      page,
+      limit,
+      sortBy,
+      sortOrder,
       joins,
       params: { keyword },
     } = pagination
