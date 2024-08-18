@@ -16,15 +16,18 @@ import { UserResponseDto } from './dto/user-response.dto'
 import { PaginationRequest } from 'src/app/shared/interfaces/pagination.interface'
 import { PaginationParams } from 'src/app/shared/decorators/pagination-params.decorator'
 import { PaginationResponseDto } from 'src/app/shared/dtos/pagination-response.dto'
-import { ApiBody, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger'
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { ApiGlobalResponse } from 'src/app/shared/decorators/api-global-response.decorators'
 import { ApiPaginatedResponse } from 'src/app/shared/decorators/api-paginated-response.decorator'
+import { Permissions } from '../permissions/decorators/permissions.decorator'
 
+@ApiTags('Users')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @Permissions('admin.users.create')
   @ApiOperation({ summary: 'Create a new user' })
   @ApiBody({ type: CreateUserDto })
   @ApiGlobalResponse(UserResponseDto)
@@ -34,6 +37,7 @@ export class UserController {
   }
 
   @Get()
+  @Permissions('admin.users.read')
   @ApiOperation({ summary: 'Retrieve paginated users list' })
   @ApiPaginatedResponse(UserResponseDto)
   @ApiQuery({
@@ -49,6 +53,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Permissions('admin.users.read')
   @ApiOperation({ description: 'Get user by id' })
   @ApiGlobalResponse(UserResponseDto)
   @ApiParam({ name: 'id', type: 'number', description: 'User ID' })
@@ -57,6 +62,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @Permissions('admin.users.update')
   @ApiOperation({ description: 'Update user by id' })
   @ApiGlobalResponse(UserResponseDto)
   @ApiBody({ type: UpdateUserDto, description: 'New User Data' })
@@ -70,6 +76,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Permissions('admin.users.delete')
   @ApiOperation({ summary: 'Delete User by ID' })
   @ApiParam({ name: 'id', type: 'number', description: 'User ID' })
   remove(@Param('id') id: string) {

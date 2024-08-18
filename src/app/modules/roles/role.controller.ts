@@ -16,15 +16,18 @@ import { RoleResponseDto } from './dto/role-response.dto'
 import { PaginationRequest } from 'src/app/shared/interfaces/pagination.interface'
 import { PaginationParams } from 'src/app/shared/decorators/pagination-params.decorator'
 import { PaginationResponseDto } from 'src/app/shared/dtos/pagination-response.dto'
-import { ApiBody, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger'
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { ApiGlobalResponse } from 'src/app/shared/decorators/api-global-response.decorators'
 import { ApiPaginatedResponse } from 'src/app/shared/decorators/api-paginated-response.decorator'
+import { Permissions } from '../permissions/decorators/permissions.decorator'
 
+@ApiTags('Roles')
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
+  @Permissions('admin.roles.create')
   @ApiOperation({ summary: 'Create a new role' })
   @ApiBody({ type: CreateRoleDto })
   @ApiGlobalResponse(RoleResponseDto)
@@ -34,6 +37,7 @@ export class RoleController {
   }
 
   @Get()
+  @Permissions('admin.roles.read')
   @ApiOperation({ summary: 'Retrieve paginated roles list' })
   @ApiPaginatedResponse(RoleResponseDto)
   @ApiQuery({
@@ -49,6 +53,7 @@ export class RoleController {
   }
 
   @Get(':id')
+  @Permissions('admin.roles.read')
   @ApiOperation({ description: 'Get role by id' })
   @ApiGlobalResponse(RoleResponseDto)
   @ApiParam({ name: 'id', type: 'number', description: 'Role ID' })
@@ -57,6 +62,7 @@ export class RoleController {
   }
 
   @Put(':id')
+  @Permissions('admin.roles.update')
   @ApiOperation({ description: 'Update role by id' })
   @ApiGlobalResponse(RoleResponseDto)
   @ApiBody({ type: UpdateRoleDto, description: 'New Role Data' })
@@ -70,6 +76,7 @@ export class RoleController {
   }
 
   @Delete(':id')
+  @Permissions('admin.roles.delete')
   @ApiOperation({ summary: 'Delete Role by ID' })
   @ApiParam({ name: 'id', type: 'number', description: 'Role ID' })
   remove(@Param('id') id: string) {

@@ -10,9 +10,10 @@ import {
 import { ProfileService } from './profile.service'
 import { UpdateProfileDto } from './dto/update-profile.dto'
 import { ProfileResponseDto } from './dto/profile-response.dto'
-import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger'
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { ApiGlobalResponse } from 'src/app/shared/decorators/api-global-response.decorators'
 
+@ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
