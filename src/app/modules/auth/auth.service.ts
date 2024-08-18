@@ -1,26 +1,73 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Inject, Injectable } from '@nestjs/common'
+import { UserService } from '../user/user.service'
+import { TokenService } from '../../shared/services/token.service'
+import { RegisterDto } from './dto/register.dto'
+import { AuthMapper } from './auth.mapper'
+import { JwtPayload } from './dto/jwt-payload.dto'
+import { User } from '../user/user.entity'
+import { AuthResponseDto } from './dto/auth-response.dto'
+import { UserMapper } from '../user/user.mapper'
+import { BLACKLIST_TOKENS_PREFIX } from '../../shared/constants.ts/constants'
+import { timeToSeconds } from 'src/app/shared/helpers/utils'
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+  ) {}
+
+  public async validateUser(username: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByUsername(username)
+    if (!user) {
+      return null
+    }
+    const matchedPassword = this.userService.matchPassword(
+      password,
+      user.password,
+    )
+    if (matchedPassword) {
+      const { password, ...result } = user
+      return result
+    }
+
+    return null
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  public async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
+    const createUserDto = AuthMapper.toCreateUserDto(registerDto)
+    const user = await this.userService.create(createUserDto)
+    const payload: JwtPayload = {
+      id: `${user.id}`,
+      username: user.username,
+    }
+
+    const token = this.tokenService.generateAuthToken(payload)
+    const permissions = []
+
+    return {
+      user,
+      permissions,
+      token,
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  public login(user: User): AuthResponseDto {
+    const payload: JwtPayload = { id: `${user.id}`, username: user.username }
+    const token = this.tokenService.generateAuthToken(payload)
+    const permissions = user.roles.flatMap((role) =>
+      role.permissions.map((permission) => permission.slug),
+    )
+    const authorizedUser = UserMapper.toDto(user)
+
+    return {
+      user: authorizedUser,
+      permissions,
+      token,
+    }
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  public async logout(user: User, token: string) {
+    return await this.tokenService.saveTokenOnBlacklist(token, user.username)
   }
 }

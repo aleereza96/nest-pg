@@ -23,5 +23,5 @@ export class User extends BaseEntity {
   @JoinTable({
     name: 'REL_USER_ROLE',
   })
-  systemRoles: Role[]
+  roles: Role[]
 }

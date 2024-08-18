@@ -10,6 +10,7 @@ import { PaginationRequest } from 'src/app/shared/interfaces/pagination.interfac
 import { Pagination } from 'src/app/shared/helpers/pagination.helper'
 import { ProfileService } from '../profile/profile.service'
 import { CreateProfileDto } from '../profile/dto/create-profile.dto'
+import { User } from './user.entity'
 
 @Injectable()
 export class UserService {
@@ -45,6 +46,14 @@ export class UserService {
     return UserMapper.toDto(userEntity)
   }
 
+  public async findUserByUsername(username: string): Promise<User> {
+    return await this.userRepository.findOne({
+      where: { username },
+      select: ['id', 'password', 'profile', 'roles', 'username'],
+      relations: ['roles', 'roles.permissions', 'profile'],
+    })
+  }
+
   public async update(
     id: number,
     updateUserDto: UpdateUserDto,
@@ -63,6 +72,10 @@ export class UserService {
     const profileId = +user.profileId
     await this.profileService.remove(profileId)
     return await this.userRepository.delete(user)
+  }
+
+  public matchPassword(password: string, userPassword: string) {
+    return HashHelper.compare(password, userPassword)
   }
 
   private async createNewProfile() {

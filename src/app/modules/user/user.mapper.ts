@@ -4,7 +4,7 @@ import { UserResponseDto } from './dto/user-response.dto'
 import { User } from './user.entity'
 
 export class UserMapper {
-  public static async toDto(entity: User): Promise<UserResponseDto> {
+  public static toDto(entity: User): UserResponseDto {
     const dto = new UserResponseDto()
 
     dto.id = `${entity.id}`
